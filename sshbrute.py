@@ -6,7 +6,7 @@ import paramiko
 from termcolor import colored
 import platform
 import socket
-from utils import handle_ssh_error
+import utils
 
 def main():
     # Ambil argumen dari baris perintah
@@ -96,7 +96,7 @@ def main():
             try:
                 ssh.connect(args.server, port=args.port, username=username, password=password, banner_timeout=2, gss_auth=False, look_for_keys=False, auth_timeout=2, timeout=5)
             except Exception as e:
-                if handle_ssh_error(args.server, username, password, i, len(usernames), j, len(passwords), e):
+                if utils.handle_ssh_error(args.server, username, password, i, len(usernames), j, len(passwords), e):
                     found_error = True
                     break
             else:
@@ -117,7 +117,7 @@ def main():
         for username, password in found_credentials:
             f.write(f'Username: {username}, Password: {password}\n')
 
-# Cek apakah ada credential yang cocok
+    # Cek apakah ada credential yang cocok
     if len(found_credentials) > 0:
         print(f'Found credentials:')
         for username, password in found_credentials:
@@ -135,7 +135,6 @@ def main():
                 break
             elif choice.lower() == 'n':
                 print(colored('=> Exiting...', 'red'))
-
                 break
             else:
                 print(colored('Invalid choice. Please enter y or n.', 'red'))
